@@ -16,6 +16,7 @@ CREATE TABLE Events (
     Date TEXT,
     
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
+    FOREIGN KEY (ImageID) REFERENCES EventImages(ImageID) ON DELETE CASCADE
 );
 
 CREATE TABLE EventImages (
