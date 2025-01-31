@@ -20,7 +20,7 @@ CREATE TABLE Events (
 
 CREATE TABLE EventImages (
     ImageID CHAR(32) PRIMARY KEY,
-    ImageData BLOB
+    ImageData BLOB,
 
     FOREIGN KEY (ImageID) REFERENCES Events(ImageID) ON DELETE CASCADE
 );
