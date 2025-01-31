@@ -1,10 +1,17 @@
 from flask import Flask
-
+import database
 app = Flask(__name__)
+app.secret_key = "18fd24bf6a2ad4dac04a33963db1c42f"
 
-@app.route("/")
-def index():
-    return "Hello World!"
+@app.route("/image/<string:image_id>")
+def show_image(image_id):
+    image = database.get_image(image_id)[0][0]
+    if not image:
+        return 404
+    
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/png")
+    return response
 
 
 def get_category_id(category):
