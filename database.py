@@ -42,3 +42,18 @@ class Database():
         if check_password_hash(db_hash[0][0], password) is False:
             return False
         return True
+
+    def get_image(self, image_id):
+        result = self.query("""
+        SELECT ImageData FROM EventImages 
+        WHERE ImageID = ?""", [image_id])
+
+        return result
+    
+    def add_image(self, data):
+        image_id = str(uuid.uuid4())
+        self.execute("""
+        INSERT INTO EventImages (ImageID, ImageData)
+        VALUES (?, ?)""", [image_id, data])
+    
+        return image_id
