@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muokkaa tapahtumaa - Tapahtumakalenteri</title>
+    <link rel="stylesheet" href="/static/tailwind.css">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col">
+        <nav class="bg-white shadow-md py-4">
+            <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold text-gray-800">Tapahtumakalenteri</a>
+                <a href="/" class="text-blue-700 hover:underline">Takaisin</a>
+            </div>
+        </nav>
+        <main class="flex-grow">
+            <div class="max-w-4xl mx-auto px-4 py-8">
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Muokkaa tapahtumaa</h1>
+
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <ul class=flashes>
+                        {% for message in messages %}
+                        <h2 class="text-lg font-bold text-red-800 text-center mb-6">{{ message }}</h2>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% endwith %}
+
+                    <form action="/edit/{{ event.id }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                        <label class="block">
+                            <span class="text-gray-700">Tapahtuman nimi</span>
+                            <input type="text" name="title" value="{{ event.title }}" required class="block w-full mt-1 p-2 border rounded-lg">
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700">Lyhyt kuvaus</span>
+                            <input type="text" name="short_description" value="{{ event.short_description }}" required class="block w-full mt-1 p-2 border rounded-lg">
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700">Koko kuvaus</span>
+                            <textarea name="full_description" required class="block w-full mt-1 p-2 border rounded-lg">{{ event.full_description }}</textarea>
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700">Hinta (€)</span>
+                            <input type="number" name="price" value="{{ event.price }}" required class="block w-full mt-1 p-2 border rounded-lg">
+                        </label>
+                        <label class="block text-gray-700">Kategoria</label>
+                        <select name="category" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>Konsertti</option>
+                            <option>Teatteri</option>
+                            <option>Urheilu</option>
+                            <option>Muu</option>
+                        </select>
+                        <div>
+                            <label class="block text-gray-700">Tapahtuman aika</label>
+                            <input type="datetime-local" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" name="event_date" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">Kuva (valinnainen)</label>
+                            <input type="file" name="image" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Tallenna muutokset</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
