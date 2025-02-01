@@ -57,3 +57,35 @@ class Database():
         VALUES (?, ?)""", [image_id, data])
     
         return image_id
+
+    def get_event(self, event_id):
+        return self.query("""
+        SELECT UserID, Title, Description, Price, CategoryID, ImageID, Date, ShortDescription
+        FROM Events
+        WHERE EventID = ?""", [event_id])
+    
+    def delete_event(self, event_id):
+        self.execute("DELETE FROM Events WHERE EventID = ?", [event_id])
+
+    def update_event(self, event_id, title, description, short_description, price, category_id, image_id, event_date):
+        self.execute("""
+            UPDATE Events
+            SET Title = ?, Description = ?, ShortDescription = ?, Price = ?, CategoryID = ?, ImageID = ?, Date = ?
+            WHERE EventID = ?""", [title, description, short_description, price, category_id, image_id, event_date, event_id])
+
+
+    def add_event(self, user_id, title, short_description, description, price, category_id, image_id, event_date):
+        event_id = str(uuid.uuid4())
+        self.execute("""
+        INSERT INTO Events (UserID, Title, ShortDescription, Description, Price, CategoryID, ImageID, EventID, Date) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", [str(user_id), title, short_description, description, price, category_id, image_id, event_id, event_date])
+
+    def get_all_events(self):
+        return self.query("""
+        SELECT Title, ShortDescription, Price, ImageID, EventID, Date FROM Events""")
+    
+    def search_events(self, keyword):
+       
+        return self.query("""
+        SELECT Title, ShortDescription, Price, ImageID, EventID, Date FROM Events 
+        WHERE Title LIKE ? OR Description LIKE ?""", [f"%{keyword}%", f"%{keyword}%"])
