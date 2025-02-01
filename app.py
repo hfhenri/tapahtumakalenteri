@@ -224,6 +224,63 @@ def delete(event_id):
     
     return "Forbidden", 403
 
+@app.route("/edit/<string:event_id>", methods=["GET", "POST"])
+def edit(event_id):
+
+    if "user_id" not in session:
+        return "Forbidden", 403
+    
+    db_event = database.get_event(event_id)
+
+    if len(db_event) == 0:
+        return "Not found", 404
+    
+    db_event = db_event[0]
+
+    if db_event[0] != session["user_id"]:
+        return "Forbidden", 403
+
+    if request.method == "GET":
+        
+        event = {}
+
+        event["title"] = db_event[1]
+        event["id"] = event_id
+        event["short_description"] = db_event[7]
+        event["full_description"] = db_event[2]
+        event["price"] = db_event[3]
+
+        return render_template("edit.html", event=event)
+    
+    check_csrf()
+
+    new_title = request.form["title"]
+    new_short_description = request.form["short_description"]
+    new_full_description = request.form["short_description"]
+    new_event_date = request.form["event_date"]
+    new_price = request.form["price"]
+    new_category = get_category_id(request.form["category"])
+
+    try:
+        if float(new_price) < 0.0:
+            flash("Hinnan täytyy olla positiivinen")
+            return redirect("/edit/" + event_id)
+
+    except ValueError:
+        flash("Hinnan täytyy olla numero")
+        return redirect("/edit/" + event_id)
+
+    new_image_id = None
+    file = request.files["image"]
+    file_data = file.read()
+    if len(file_data) > 0:
+        new_image_id = database.add_image(file_data)
+
+    database.update_event(event_id, new_title, new_full_description, new_short_description, new_price, new_category, new_image_id, new_event_date)
+
+
+    return redirect("/event/" + event_id)
+
 def get_category_id(category):
     if category == "Konsertti":
         return 0
