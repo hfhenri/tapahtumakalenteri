@@ -71,6 +71,49 @@ def show_image(image_id):
     response.headers.set("Content-Type", "image/png")
     return response
 
+@app.route("/create", methods=["GET", "POST"])
+def create():
+
+    if request.method == "GET":
+
+        if "user_id" not in session:
+            return redirect("/login")
+        
+        if len(database.get_username(session["user_id"])) == 0:
+            del session["user_id"]
+            return redirect("/login")
+
+        return render_template("create.html")
+    
+    check_csrf()
+    
+    title = request.form["title"]
+    category = request.form["category"]
+    price = request.form["price"]
+    short_description = request.form["short_description"]
+    long_description = request.form["long_description"]
+    event_date = request.form["event_date"].replace("T", " ")
+
+    try:
+        if float(price) < 0.0:
+            flash("Hinnan täytyy olla positiivinen")
+            return redirect("/create")
+
+    except ValueError:
+        flash("Hinnan täytyy olla numero")
+        return redirect("/create")
+    
+    image_id = None
+
+    file = request.files["image"]
+    file_data = file.read()
+    if len(file_data) > 0:
+        image_id = database.add_image(file_data)        
+
+    database.add_event(session["user_id"], title, short_description, long_description, price, get_category_id(category), image_id, event_date)
+
+    return redirect("/")
+
 @app.route("/")
 def index():
 
