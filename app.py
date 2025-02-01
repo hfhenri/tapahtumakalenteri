@@ -259,7 +259,7 @@ def edit(event_id):
     new_title = request.form["title"]
     new_short_description = request.form["short_description"]
     new_full_description = request.form["short_description"]
-    new_event_date = request.form["event_date"]
+    new_event_date = request.form["event_date"].replace("T", " ")
     new_price = request.form["price"]
     new_category = get_category_id(request.form["category"])
 
