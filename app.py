@@ -144,6 +144,38 @@ def index():
     
     return render_template("index.html", events=events, logged_in=logged_in, is_search=False)
 
+@app.route("/search")
+def search():
+    if "search" not in request.args:
+        return "Bad request", 400
+    
+    query = request.args["search"]
+    db_events = database.search_events(query)
+    
+    events = []
+
+    for db_event in db_events:
+        event = {}
+
+        event["title"] = db_event[0]
+        event["short_description"] = db_event[1]
+        event["price"] = db_event[2]
+        event["event_date"] = db_event[5]
+
+        if db_event[3] is not None:
+            event["image_url"] = "/image/" + db_event[3]
+
+        event["event_url"] = "/event/" + db_event[4]
+        events.append(event)
+    
+    logged_in = False
+
+    if "user_id" in session:
+        if len(database.get_username(session["user_id"])) > 0:
+            logged_in = True
+        
+    return render_template("index.html", events=events, logged_in=logged_in, query=query, is_search=True, num_results=len(events))
+
 def get_category_id(category):
     if category == "Konsertti":
         return 0
