@@ -71,6 +71,35 @@ def show_image(image_id):
     response.headers.set("Content-Type", "image/png")
     return response
 
+@app.route("/")
+def index():
+
+    db_events = database.get_all_events()
+    
+    events = []
+
+    for db_event in db_events:
+        event = {}
+        event["title"] = db_event[0]
+        event["short_description"] = db_event[1]
+        event["price"] = db_event[2]
+        event["event_date"] = db_event[5]
+
+        if db_event[3] is not None:
+            event["image_url"] = "/image/" + db_event[3]
+
+        event["event_url"] = "/event/" + db_event[4]
+
+        events.append(event)
+    
+    logged_in = False
+
+    if "user_id" in session:
+        if len(database.get_username(session["user_id"])) > 0:
+            logged_in = True
+        
+    
+    return render_template("index.html", events=events, logged_in=logged_in, is_search=False)
 
 def get_category_id(category):
     if category == "Konsertti":
