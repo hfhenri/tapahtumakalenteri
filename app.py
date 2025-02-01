@@ -176,6 +176,37 @@ def search():
         
     return render_template("index.html", events=events, logged_in=logged_in, query=query, is_search=True, num_results=len(events))
 
+@app.route("/event/<string:event_id>")
+def event(event_id):
+    db_event = database.get_event(event_id)
+
+    if len(db_event) == 0:
+        return "Not found", 404
+    
+    db_event = db_event[0]
+
+    event = {}
+
+    event["title"] = db_event[1]
+    event["price"] = db_event[3]
+    event["full_description"] = db_event[2]
+    event["category"] = get_category_from_id(db_event[4])
+    event["date"] = db_event[6]
+
+
+    if db_event[5] is not None:
+        event["image_url"] = "/image/" + db_event[5]
+
+    is_creator = False
+
+    if "user_id" in session:
+        if db_event[0] == session["user_id"]:
+            event["delete_url"] = "/delete/" + event_id
+            event["edit_url"] = "/edit/" + event_id
+            is_creator = True
+
+    return render_template("event.html", event=event, is_creator=is_creator)
+
 def get_category_id(category):
     if category == "Konsertti":
         return 0
