@@ -3,6 +3,24 @@ import database
 app = Flask(__name__)
 app.secret_key = "18fd24bf6a2ad4dac04a33963db1c42f"
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "GET":
+        return render_template("login.html")
+    
+    username = request.form["username"]
+    password = request.form["password"]
+
+    if database.check_password(username, password):
+        session["user_id"] = database.get_user_id(username)[0][0]
+        session["csrf_token"] = secrets.token_hex(16)
+    else:
+        flash("Käyttäjänimi tai salasana väärin")
+        return redirect("/login")
+
+    return redirect("/")
+
 @app.route("/image/<string:image_id>")
 def show_image(image_id):
     image = database.get_image(image_id)[0][0]
