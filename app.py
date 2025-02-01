@@ -21,6 +21,35 @@ def login():
 
     return redirect("/")
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+    if request.method == "GET":
+        return render_template("register.html")
+    
+    username = request.form["username"]
+    password = request.form["password"]
+    confirm_password = request.form["confirm-password"]
+
+    if len(username) > 50:
+        flash("Käyttäjänimi ei voi olla yli 50 merkkiä")
+        return redirect("/register")
+    
+    if password != confirm_password:
+        flash("Salasanat eivät täsmää")
+        return redirect("/register")
+
+    if len(database.get_user_id(username)) > 0:
+        flash("Käyttäjänimi on käytössä")
+        return redirect("/register")
+
+    hash = generate_password_hash(password)
+    database.add_user(username, hash)
+    session["user_id"] = database.get_user_id(username)[0][0]
+    session["csrf_token"] = secrets.token_hex(16)
+
+    return redirect("/")
+
 @app.route("/image/<string:image_id>")
 def show_image(image_id):
     image = database.get_image(image_id)[0][0]
@@ -59,3 +88,5 @@ def check_csrf():
         abort(403)
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
+
+
