@@ -207,6 +207,23 @@ def event(event_id):
 
     return render_template("event.html", event=event, is_creator=is_creator)
 
+@app.route("/delete/<string:event_id>", methods=["POST"])
+def delete(event_id):
+
+    check_csrf()
+
+    event = database.get_event(event_id)[0]
+
+    if len(event) == 0:
+        return "Not found", 404
+
+    if "user_id" in session:
+        if event[0] == session["user_id"]:
+            database.delete_event(event_id)
+            return redirect("/")
+    
+    return "Forbidden", 403
+
 def get_category_id(category):
     if category == "Konsertti":
         return 0
