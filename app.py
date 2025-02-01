@@ -6,6 +6,8 @@ from werkzeug.security import generate_password_hash
 app = Flask(__name__)
 app.secret_key = "18fd24bf6a2ad4dac04a33963db1c42f"
 
+database = Database()
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
