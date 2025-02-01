@@ -53,6 +53,14 @@ def register():
 
     return redirect("/")
 
+@app.route("/logout")
+def logout():
+
+    del session["user_id"]
+    del session["csrf_token"]
+
+    return redirect("/")
+
 @app.route("/image/<string:image_id>")
 def show_image(image_id):
     image = database.get_image(image_id)[0][0]
