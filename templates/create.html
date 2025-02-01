@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luo tapahtuma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col">
+        <nav class="bg-white shadow-md py-4">
+            <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold text-gray-800">Tapahtumakalenteri</a>
+                <a href="/" class="text-blue-700 hover:underline">Takaisin</a>
+            </div>
+        </nav>
+
+        <main class="flex-grow flex items-center justify-center py-8">
+            <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Luo uusi tapahtuma</h2>
+
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class=flashes>
+                    {% for message in messages %}
+                    <h2 class="text-lg font-bold text-red-800 text-center mb-6">{{ message }}</h2>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                {% endwith %}
+
+                <form action="/create" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700">Tapahtuman nimi</label>
+                        <input type="text" name="title" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Kategoria</label>
+                        <select name="category" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>Konsertti</option>
+                            <option>Teatteri</option>
+                            <option>Urheilu</option>
+                            <option>Muu</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Hinta (€)</label>
+                        <input type="text" name="price" value="0.0" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Lyhyt kuvaus</label>
+                        <input type="text" name="short_description" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Koko kuvaus</label>
+                        <textarea name="long_description" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" required></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Tapahtuman aika</label>
+                        <input type="datetime-local" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" name="event_date" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Kuva (valinnainen)</label>
+                        <input type="file" name="image" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+                    <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700">Luo tapahtuma</button>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
