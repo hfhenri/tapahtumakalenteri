@@ -110,6 +110,9 @@ def create():
     file = request.files["image"]
     file_data = file.read()
     if len(file_data) > 0:
+        if len(file_data) > 10_000 * 1024:
+            flash("Kuva on liian iso. (10 MB Max)")
+            return redirect("/create")
         image_id = database.add_image(file_data)        
 
     database.add_event(session["user_id"], title, short_description, long_description, price, get_category_id(category), image_id, event_date)
@@ -276,6 +279,9 @@ def edit(event_id):
     file = request.files["image"]
     file_data = file.read()
     if len(file_data) > 0:
+        if len(file_data) > 10_000 * 1024:
+            flash("Kuva on liian iso. (10 MB Max)")
+            return redirect("/edit")
         new_image_id = database.add_image(file_data)
 
     database.update_event(event_id, new_title, new_full_description, new_short_description, new_price, new_category, new_image_id, new_event_date)
