@@ -196,6 +196,7 @@ def event(event_id):
     event["price"] = db_event[3]
     event["full_description"] = db_event[2]
     event["category"] = get_category_from_id(db_event[4])
+    event["creator"] = database.get_username(db_event[0])[0][0]
     event["date"] = db_event[6]
 
 
