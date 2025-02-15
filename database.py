@@ -87,7 +87,7 @@ class Database():
         return self.query("""
         SELECT Title, ShortDescription, Price, ImageID, EventID, Date FROM Events""")
 
-     def add_question(self, event_id, user_id, question_text):
+    def add_question(self, event_id, user_id, question_text):
         
         question_id = str(uuid.uuid4())
         self.execute("""
