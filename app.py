@@ -2,6 +2,7 @@ from flask import abort, flash, make_response, redirect, render_template, reques
 from database import Database
 import secrets
 from werkzeug.security import generate_password_hash
+from utils import get_category_from_id, get_category_id
 
 app = Flask(__name__)
 app.secret_key = "18fd24bf6a2ad4dac04a33963db1c42f"
@@ -134,9 +135,9 @@ def index():
         event["event_date"] = db_event[5]
 
         if db_event[3] is not None:
-            event["image_url"] = "/image/" + db_event[3]
+            event["image_id"] = db_event[3]
 
-        event["event_url"] = "/event/" + db_event[4]
+        event["id"] = db_event[4]
 
         events.append(event)
     
@@ -148,6 +149,7 @@ def index():
         
     
     return render_template("index.html", events=events, logged_in=logged_in, is_search=False)
+
 
 @app.route("/search")
 def search():
@@ -195,23 +197,28 @@ def event(event_id):
     event["title"] = db_event[1]
     event["price"] = db_event[3]
     event["full_description"] = db_event[2]
-    event["category"] = get_category_from_id(db_event[4])
+    event["id"] = event_id
+
     event["creator"] = database.get_username(db_event[0])[0][0]
+
+    event["category"] = get_category_from_id(db_event[4])
     event["date"] = db_event[6]
 
 
     if db_event[5] is not None:
-        event["image_url"] = "/image/" + db_event[5]
+        event["image_id"] = db_event[5]
 
     is_creator = False
+    logged_in = False
 
     if "user_id" in session:
         if db_event[0] == session["user_id"]:
-            event["delete_url"] = "/delete/" + event_id
-            event["edit_url"] = "/edit/" + event_id
             is_creator = True
 
-    return render_template("event.html", event=event, is_creator=is_creator)
+        if len(database.get_username(session["user_id"])[0]) > 0:
+            logged_in = True
+            
+    return render_template("event.html", event=event, is_creator=is_creator, logged_in=logged_in)
 
 @app.route("/delete/<string:event_id>", methods=["POST"])
 def delete(event_id):
@@ -290,27 +297,64 @@ def edit(event_id):
 
     return redirect("/event/" + event_id)
 
-def get_category_id(category):
-    if category == "Konsertti":
-        return 0
-    elif category == "Teatteri":
-        return 1
-    elif category == "Urheilu":
-        return 2
-    elif category == "Muu":
-        return 3
-    return 3
+@app.route("/me")
+def me():
 
-def get_category_from_id(id):
-    if id == 0:
-        return "Konsertti"
-    elif id == 1:
-        return "Teatteri"
-    elif id == 2:
-        return "Urheilu"
-    elif id == "3":
-        return "Muu"
-    return "Muu"
+    if "user_id" not in session:
+        return "Forbidden", 403
+    
+    if len(database.get_username(session["user_id"])[0]) == 0:
+        return "Bad request", 400
+    
+    db_events = database.get_user_events(session["user_id"])
+    events = []
+    questions = []
+
+    for db_event in db_events:
+        event = {}
+
+        event["title"] = db_event[0]
+        event["short_description"] = db_event[1]
+        event["price"] = db_event[2]
+        event["event_date"] = db_event[5]
+
+        if db_event[3] is not None:
+            event["image_id"] = db_event[3]
+
+        event["id"] = db_event[4]
+        events.append(event)
+
+        db_event_questions = database.get_event_questions(db_event[4])
+
+
+        for db_question in db_event_questions:
+            question = {}
+
+            question["question"] = db_question[1]
+            question["sender_name"] = db_question[2]
+            question["event_title"] = db_event[0]
+
+            questions.append(question)
+    
+    return render_template("me.html", events=events, questions=questions)
+
+@app.route("/question/<string:event_id>", methods=["POST"])
+def question(event_id):
+    check_csrf()
+
+    if "user_id" not in session:
+        return "Forbidden", 403
+    
+    if len(database.get_username(session["user_id"])[0]) == 0:
+        return "Bad request", 400
+
+    question_text = request.form["question"]
+
+    database.add_question(event_id, session["user_id"], question_text)
+
+    flash("Kysymys lähetetty.")
+    return redirect(f"/event/{event_id}")
+
 
 def check_csrf():
     if "csrf_token" not in request.form:
