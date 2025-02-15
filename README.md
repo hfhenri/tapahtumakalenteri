@@ -9,12 +9,15 @@
 * Käyttäjä pystyy valitsemaan tapahtuman kategorian.
 * Käyttäjä näkee sovellukseen lisätyt tapahtumat.
 * Käyttäjä pystyy etsimään tapahtumia hakusanalla.
+* Käyttäjä pystyy lähettämään kysymyksiä järjestäjälle.
+* Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän lisäämät tapahtumat.
 
 ## Sovelluksen puuttuvat toiminnot
 
-* Käyttäjä pystyy ilmoittautumaan tapahtumaan ja lähettää kysymyksiä järjestäjälle.
+* Järjestäjä pystyy vastaamaan kysymyksiin.
+* Käyttäjä pystyy ilmoittautumaan tapahtumaan.
 * Käyttäja pystyy näkemään omat ilmoittautumiset.
-* Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän lisäämät tapahtumat.
+
   
 ## Sovelluksen suorittaminen
 
