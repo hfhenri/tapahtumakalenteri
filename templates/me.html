@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omat tiedot - Tapahtumakalenteri</title>
+    <link rel="stylesheet" href="/static/tailwind.css">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col">
+        <nav class="bg-white shadow-md py-4">
+            <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold text-gray-800">Tapahtumakalenteri</a>
+                <a href="/logout" class="text-blue-700 hover:underline">Kirjaudu ulos</a>
+            </div>
+        </nav>
+
+        <main class="flex-grow">
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <section class="mb-12">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Omat tapahtumat</h2>
+                    {% if events %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        
+                        {% for event in events %}
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <a href="/event/{{ event.id }}">
+                            <img src="/image/{{ event.image_id }}" alt=" " class="w-full h-52 object-cover rounded-t-lg mb-4">
+                            <h3 class="text-2xl font-semibold text-gray-800 mb-2">{{ event.title }}</h3>
+                            <p class="text-gray-600 text-sm mb-4">{{ event.short_description }}</p>
+                            <a href="/edit/{{ event.id }}" class="text-blue-700 hover:underline">Muokkaa</a>
+                            </a>
+                        </div>
+                        
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-gray-600">Sinulla ei ole yhtään tapahtumaa.</p>
+                    {% endif %}
+                </section>
+
+                <section>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Kysymykset</h2>
+                    {% if questions %}
+                    <div class="space-y-4">
+                        {% for question in questions %}
+                        <div class="bg-white p-4 rounded-lg shadow-md">
+                            <p class="text-gray-800 font-semibold">Tapahtuma: {{ question.event_title }}</p>
+                            <p class="text-gray-600">{{ question.question }}</p>
+                            {% if question.sender_name %}
+                            <p class="text-gray-500 text-sm">Kysyjä: {{ question.sender_name }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-gray-600">Et ole saanut yhtään kysymystä.</p>
+                    {% endif %}
+                </section>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
