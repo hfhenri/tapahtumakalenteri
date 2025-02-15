@@ -86,9 +86,31 @@ class Database():
     def get_all_events(self):
         return self.query("""
         SELECT Title, ShortDescription, Price, ImageID, EventID, Date FROM Events""")
+
+     def add_question(self, event_id, user_id, question_text):
+        
+        question_id = str(uuid.uuid4())
+        self.execute("""
+        INSERT INTO Questions (QuestionID, EventID, UserID, QuestionText)
+        VALUES (?, ?, ?, ?)""", [question_id, event_id, user_id, question_text])
+
+    def get_user_events(self, user_id):
+       
+        return self.query("""
+        SELECT Title, ShortDescription, Price, ImageID, EventID, Date FROM Events WHERE UserID = ?""", [user_id])
     
     def search_events(self, keyword):
        
         return self.query("""
         SELECT Title, ShortDescription, Price, ImageID, EventID, Date FROM Events 
         WHERE Title LIKE ? OR Description LIKE ?""", [f"%{keyword}%", f"%{keyword}%"])
+
+     def get_event_questions(self, event_id):
+        
+        return self.query("""
+        SELECT Questions.QuestionID, Questions.QuestionText, Users.Username 
+        FROM Questions
+        JOIN Users ON Questions.UserID = Users.UserID 
+        WHERE Questions.EventID = ?""", [event_id])
+
+
