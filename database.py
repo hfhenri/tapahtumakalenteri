@@ -105,7 +105,7 @@ class Database():
         SELECT Title, ShortDescription, Price, ImageID, EventID, Date FROM Events 
         WHERE Title LIKE ? OR Description LIKE ?""", [f"%{keyword}%", f"%{keyword}%"])
 
-     def get_event_questions(self, event_id):
+    def get_event_questions(self, event_id):
         
         return self.query("""
         SELECT Questions.QuestionID, Questions.QuestionText, Users.Username 
