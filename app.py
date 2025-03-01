@@ -412,6 +412,7 @@ def me():
             question["question"] = db_question[1]
             question["sender_name"] = db_question[2]
             question["event_title"] = db_event[0]
+            question["id"] = db_question[0]
 
             questions.append(question)
     
