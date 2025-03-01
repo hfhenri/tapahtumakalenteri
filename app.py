@@ -198,18 +198,19 @@ def event(event_id):
     event["price"] = db_event[3]
     event["full_description"] = db_event[2]
     event["id"] = event_id
-
     event["creator"] = database.get_username(db_event[0])[0][0]
-
     event["category"] = get_category_from_id(db_event[4])
     event["date"] = db_event[6]
-
+    event["registrants"] = database.get_event_registrations(event_id)
 
     if db_event[5] is not None:
         event["image_id"] = db_event[5]
 
     is_creator = False
     logged_in = False
+    registered = False
+
+    question = {}
 
     if "user_id" in session:
         if db_event[0] == session["user_id"]:
@@ -217,8 +218,22 @@ def event(event_id):
 
         if len(database.get_username(session["user_id"])[0]) > 0:
             logged_in = True
-            
-    return render_template("event.html", event=event, is_creator=is_creator, logged_in=logged_in)
+
+        if database.is_user_registered(event_id, session["user_id"]):
+            registered = True
+
+        db_question = database.get_user_question(event_id, session["user_id"])
+
+        if len(db_question) > 0:
+
+            question["text"] = db_question[0][1]
+
+            db_reply = database.get_reply(db_question[0][0])
+
+            if len(db_reply) > 0:
+                question["reply"] = db_reply[0][0]
+
+    return render_template("event.html", event=event, is_creator=is_creator, logged_in=logged_in, registered=registered, question=question)
 
 @app.route("/delete/<string:event_id>", methods=["POST"])
 def delete(event_id):
