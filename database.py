@@ -91,7 +91,7 @@ class Database():
         
         question_id = str(uuid.uuid4())
         self.execute("""
-        INSERT INTO Questions (QuestionID, EventID, UserID, QuestionText)
+        REPLACE INTO Questions (QuestionID, EventID, UserID, QuestionText)
         VALUES (?, ?, ?, ?)""", [question_id, event_id, user_id, question_text])
 
     def get_user_events(self, user_id):
@@ -112,5 +112,46 @@ class Database():
         FROM Questions
         JOIN Users ON Questions.UserID = Users.UserID 
         WHERE Questions.EventID = ?""", [event_id])
+
+    def get_event_registrations(self, event_id):
+
+        registrants = []
+
+        results = self.query("""
+        SELECT Users.Username
+        FROM Registrations
+        JOIN Users ON Registrations.UserID = Users.UserID 
+        WHERE Registrations.EventID = ?""", [event_id])
+
+        for result in results:
+            registrants.append(result[0])
+
+        return registrants
+    
+    def get_reply(self, question_id):
+        return self.query("""
+        SELECT ReplyText
+        FROM Replies
+        WHERE QuestionID = ?""", [question_id])
+
+    def add_reply(self, question_id, reply_text):
+        self.execute("""
+        REPLACE INTO Replies (QuestionID, ReplyText)
+        VALUES (?, ?)""", [question_id, reply_text])
+    
+    def get_user_question(self, event_id, user_id):
+        return self.query("""
+        SELECT QuestionID, QuestionText
+        FROM Questions
+        WHERE EventID = ? AND UserID = ?""", [event_id, user_id])
+    
+    def get_question(self, question_id):
+        
+        return self.query("""
+        SELECT QuestionText, Users.Username, Events.Title, Events.EventID
+        FROM Questions
+        JOIN Users ON Questions.UserID = Users.UserID
+        JOIN Events ON Questions.EventID = Events.EventID
+        WHERE QuestionID = ?""", [question_id])
 
 
