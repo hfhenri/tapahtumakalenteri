@@ -46,6 +46,13 @@ class Database():
             return False
         return True
 
+    def is_user_registered(self, event_id, user_id):
+        results = self.query("""
+            SELECT UserID FROM Registrations
+            WHERE EventID = ? AND UserID = ?""", [event_id, user_id])
+        
+        return len(results) > 0
+
     def get_image(self, image_id):
         result = self.query("""
         SELECT ImageData FROM EventImages 
