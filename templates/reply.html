@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vastaa kysymykseen</title>
+    <link rel="stylesheet" href="/static/tailwind.css">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col">
+        <nav class="bg-white shadow-md py-4">
+            <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold text-gray-800">Tapahtumakalenteri</a>
+                <a href="/logout" class="text-blue-700 hover:underline">Kirjaudu ulos</a>
+            </div>
+        </nav>
+
+        <main class="flex-grow">
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Vastaa kysymykseen</h2>
+                <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+                    <p class="text-gray-800 font-semibold">Tapahtuma: {{ question.event_title }}</p>
+                    <p class="text-gray-600">{{ question.text }}</p>
+                    <p class="text-gray-500 text-sm">Kysyjä: {{ question.sender_name }}</p>
+                </div>
+                <form action="/reply/{{ question.id }}" method="POST" class="bg-white p-6 rounded-lg shadow-lg">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+                    <div class="mb-4">
+                        <label for="reply" class="block text-gray-700 font-bold mb-2">Vastauksesi:</label>
+                        <textarea id="reply" name="reply" rows="4" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Kirjoita vastauksesi tähän" required></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg">
+                            Lähetä vastaus
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
