@@ -33,8 +33,8 @@ CREATE TABLE Registrations (
 
 CREATE TABLE Replies (
     QuestionID CHAR(32) UNIQUE PRIMARY KEY,
-    ReplyText TEXT
-    FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID) ON DELETE CASCADE,
+    ReplyText TEXT,
+    FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID) ON DELETE CASCADE
 );
 
 CREATE TABLE Questions (
