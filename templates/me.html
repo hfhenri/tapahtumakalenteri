@@ -51,6 +51,9 @@
                             {% if question.sender_name %}
                             <p class="text-gray-500 text-sm">Kysyjä: {{ question.sender_name }}</p>
                             {% endif %}
+                            <a href="/reply/{{ question.id }}" class="inline-block mt-4 bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg">
+                                Vastaa
+                            </a>
                         </div>
                         {% endfor %}
                     </div>
