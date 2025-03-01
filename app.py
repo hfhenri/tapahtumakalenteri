@@ -297,6 +297,22 @@ def edit(event_id):
 
     return redirect("/event/" + event_id)
 
+@app.route("/register-event/<string:event_id>", methods=["POST"])
+def register_event(event_id):
+
+    check_csrf()
+
+    event = database.get_event(event_id)[0]
+
+    if len(event) == 0:
+        return "Not found", 404
+    
+    if "user_id" in session:
+        database.register_for_event(event_id, session["user_id"])
+        return redirect(f"/event/{event_id}")
+
+    return "Forbidden", 403
+
 @app.route("/me")
 def me():
 
