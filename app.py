@@ -313,6 +313,54 @@ def register_event(event_id):
 
     return "Forbidden", 403
 
+@app.route("/reply/<string:question_id>", methods=["GET", "POST"])
+def reply(question_id):
+
+    if "user_id" not in session:
+        return "Forbidden", 403
+
+    if request.method == "GET":
+
+        db_question = database.get_question(question_id)
+        db_event = database.get_event(db_question[0][3])
+
+        if db_event[0][0] != session["user_id"]:
+            return  "Forbidden", 403
+
+        if len(db_question) == 0:
+            return "Not Found", 404
+
+        question = {}
+
+        question["text"] = db_question[0][0]
+        question["sender_name"] = db_question[0][1]
+        question["event_title"] = db_question[0][2]
+        question["id"] = question_id
+
+        return render_template("reply.html", question=question)
+    
+    check_csrf()
+    
+    db_question = database.get_question(question_id)
+
+    if len(db_question) == 0:
+        return 404, "Not Found"
+        
+    db_event = database.get_event(db_question[0][3])
+
+    if len(db_event) == 0:
+        return "Not Found", 404, 
+        
+    if db_event[0][0] != session["user_id"]:
+        return  "Forbidden", 403
+        
+    if "reply" not in request.form:
+        return "Bad request", 400
+        
+    database.add_reply(question_id, request.form["reply"])
+
+    return redirect("/me")
+
 @app.route("/me")
 def me():
 
