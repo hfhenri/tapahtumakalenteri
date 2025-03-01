@@ -1,6 +1,6 @@
 # Tapahtumakalenteri
 
-## Sovelluksen nykyiset toiminnot
+## Sovelluksen toiminnot
 
 * Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
 * Käyttäjä pystyy lisäämään, muokkaamaan ja poistamaan tapahtumia.
@@ -11,13 +11,9 @@
 * Käyttäjä pystyy etsimään tapahtumia hakusanalla.
 * Käyttäjä pystyy lähettämään kysymyksiä järjestäjälle.
 * Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän lisäämät tapahtumat.
-
-## Sovelluksen puuttuvat toiminnot
-
 * Järjestäjä pystyy vastaamaan kysymyksiin.
 * Käyttäjä pystyy ilmoittautumaan tapahtumaan.
-* Käyttäja pystyy näkemään omat ilmoittautumiset.
-
+* Käyttäja pystyy näkemään oman ilmoittautumisen.
   
 ## Sovelluksen suorittaminen
 
