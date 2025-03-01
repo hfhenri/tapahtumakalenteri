@@ -11,70 +11,97 @@
         <nav class="bg-white shadow-md py-4">
             <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
                 <a href="/" class="text-2xl font-bold text-gray-800">Tapahtumakalenteri</a>
-                
                 <a href="/" class="text-blue-700 hover:underline">Takaisin</a>
             </div>
         </nav>
-        <main class="flex-grow">
-            <div class="max-w-4xl mx-auto px-4 py-8">
-
-                {% if is_creator %}
-
-                <form method="post" action="/delete/{{ event.id }}">
-                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-                    <button
-                    type="submit"
-                    class="bg-red-500 text-white py-2 px-6 mb-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        <div class="flex flex-1">
+            <main class="flex-grow">
+                <div class="max-w-4xl mx-auto px-4 py-8">
+                    {% if is_creator %}
+                    <form method="post" action="/delete/{{ event.id }}">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+                        <button
+                            type="submit"
+                            class="bg-red-500 text-white py-2 px-6 mb-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        >
+                            Poista tapahtuma
+                        </button>
+                    </form>
+                    <a
+                        href="/edit/{{ event.id }}"
+                        class="bg-blue-500 text-white py-2 px-6 mb-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
-                    Poista tapahtuma
-                    </button>
-                </form>
-
-                <a
-                href="/edit/{{ event.id }}"
-                class="bg-blue-500 text-white py-2 px-6 mb-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                Muokkaa tapahtumaa
-                </a>
-                
-                {% endif %}
-                
-                <div class="bg-white p-6 rounded-lg shadow-lg mt-4">
-                    <img src="/image/{{ event.image_id }}" alt=" " class="w-full h-64 object-cover rounded-t-lg mb-4">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2 break-words">{{ event.title }}</h1>
-                    <p class="text-gray-600 text-md text-lg font-bold mb-2">Kategoria: {{ event.category }}</p>
-                    <p class="text-gray-600 text-md text-lg font-bold mb-2">Järjestäjä: {{ event.creator }}</p>
-                    <p class="text-gray-600 text-lg mb-4">{{ event.date }}</p>
-                    <p class="text-gray-800 font-semibold text-xl mb-4">Hinta: {{ event.price }} €</p>
-                    <h1 class="text-gray-700 mb-4 text-lg break-words whitespace-pre-line">{{ event.full_description }}</h1>
-                </div>
-
-                {% if logged_in %}
-
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <ul class=flashes>
-                        {% for message in messages %}
-                        <h2 class="text-lg font-bold text-green-800 text-center mb-6 mt-6">{{ message }}</h2>
-                        {% endfor %}
-                        </ul>
+                        Muokkaa tapahtumaa
+                    </a>
                     {% endif %}
-                    {% endwith %}
-
-                <form action="/question/{{ event.id }}" method="POST" class="space-y-4">
-                    <div>
-                        <label class="text-lg mt-8 mb-2 block text-gray-700">Kysymyksiä? Lähetä kysymys tapahtuman järjestäjälle:</label>
-                        <textarea name="question" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" required></textarea>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-lg mt-4 mb-6">
+                        <img src="/image/{{ event.image_id }}" alt=" " class="w-full h-64 object-cover rounded-t-lg mb-4">
+                        
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2 break-words">{{ event.title }}</h1>
+                        <p class="text-gray-600 text-md text-lg font-bold mb-2">Kategoria: {{ event.category }}</p>
+                        <p class="text-gray-600 text-md text-lg font-bold mb-2">Järjestäjä: {{ event.creator }}</p>
+                        <p class="text-gray-600 text-lg mb-4">{{ event.date }}</p>
+                        <p class="text-gray-800 font-semibold text-xl mb-4">Hinta: {{ event.price }} €</p>
+                        <h1 class="text-gray-700 mb-4 text-lg break-words whitespace-pre-line">{{ event.full_description }}</h1>
                     </div>
-                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-                    <button type="submit" class="w-40 bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700">Lähetä</button>
-                </form>
+                    
+                    {% if registered %}
+                        <h1 class="text-xl font-bold text-gray-800 mb-2 break-words">Ilmoittauduttu ✅</h1>
+                    {% elif logged_in %}
+                        <form method="post" action="/register-event/{{ event.id }}">
+                            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+                            <button
+                                type="submit"
+                                class="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            >
+                                Ilmoittaudu tapahtumaan
+                            </button>
+                        </form>
+                    {% endif %}
+                    
+                    {% if logged_in %}
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <ul class="flashes">
+                            {% for message in messages %}
+                                <h2 class="text-lg font-bold text-green-800 text-center mb-6 mt-6">{{ message }}</h2>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% endwith %}
+                        
+                        {% if question %}
+                        <h1 class="mt-6 text-gray-700 mb-4 text-lg break-words whitespace-pre-line">Oma kysymys: {{ question.text }}</h1>
+                            {% if question.reply %}
+                                <h1 class="text-gray-700 mb-4 text-lg break-words whitespace-pre-line">Vastaus järjestäjältä: {{ question.reply }}</h1>
+                            {% endif %}
+                        {% endif %}
 
-                {% endif %}
-            </div>
+                        <form action="/question/{{ event.id }}" method="POST" class="space-y-4">
+                            <div>
+                                <label class="text-lg mt-6 mb-2 block text-gray-700">Kysymyksiä? Lähetä kysymys tapahtuman järjestäjälle:</label>
+                                <textarea name="question" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" required></textarea>
+                            </div>
+                            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+                            <button type="submit" class="w-40 bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700">Lähetä</button>
+                        </form>
 
-            
-        </main>
+                        
+                    {% endif %}
+                </div>
+            </main>
+            {% if is_creator %}
+            <aside class="w-64 bg-white shadow-lg overflow-y-auto p-4">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Ilmoittautuneet</h2>
+                <ul>
+                    {% for registrant in event.registrants %}
+                        <li class="py-2 border-b">{{ registrant }}</li>
+                    {% endfor %}
+                </ul>
+            </aside>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>
